@@ -287,7 +287,7 @@ app.post("/resetpassword", async function (req, res) {
       let mailid = req.body.email;
       let token = jwt.sign({ _id: id._id }, process.env.SECRET, { expiresIn: '5m' });
 
-      let link = `https://kiruba-password-reset.netlify.app/reset-password-page/${id._id}/${token}`;
+      let link = `https://burgerkingapp.netlify.app/reset-password-page/${id._id}/${token}`;
       console.log(link);
       // res.send(link)
 
