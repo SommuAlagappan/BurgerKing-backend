@@ -57,7 +57,7 @@ app.post("/product", authenticate, async function (req, res) {
     await db.collection("products").insertOne(req.body);
 
     // Step5: Close the connection
-    // await connection.close();
+    await connection.close();
     res.status(200).json({ message: "Data inserted successfully" });
   } catch (error) {
     console.log(error);
@@ -74,7 +74,7 @@ app.get("/products", authenticate, async function (req, res) {
 
     let resUser = await db.collection("products").find().toArray();
 
-    // await connection.close();
+    await connection.close();
 
     res.json(resUser);
   } catch (error) {
@@ -93,7 +93,7 @@ app.get("/product/:id", authenticate, async function (req, res) {
       .collection("products")
       .findOne({ _id: mongodb.ObjectId(req.params.id) });
 
-    // await connection.close();
+    await connection.close();
 
     res.json(resUser);
   } catch (error) {
@@ -119,7 +119,7 @@ app.post("/product1", authenticate, async function (req, res) {
     await db.collection("products1").insertOne(req.body);
 
     // Step5: Close the connection
-    // await connection.close();
+    await connection.close();
     res.status(200).json({ message: "Data inserted successfully" });
   } catch (error) {
     console.log(error);
@@ -136,7 +136,7 @@ app.get("/products1", authenticate, async function (req, res) {
 
     let resUser = await db.collection("products1").find().toArray();
 
-    // await connection.close();
+    await connection.close();
 
     res.json(resUser);
   } catch (error) {
@@ -155,7 +155,7 @@ app.get("/product1/:id", authenticate, async function (req, res) {
       .collection("products1")
       .findOne({ _id: mongodb.ObjectId(req.params.id) });
 
-    // await connection.close();
+    await connection.close();
 
     res.json(resUser);
   } catch (error) {
@@ -181,7 +181,7 @@ app.post("/product2", authenticate, async function (req, res) {
     await db.collection("products2").insertOne(req.body);
 
     // Step5: Close the connection
-    // await connection.close();
+    await connection.close();
     res.status(200).json({ message: "Data inserted successfully" });
   } catch (error) {
     console.log(error);
@@ -198,7 +198,7 @@ app.get("/products2", authenticate, async function (req, res) {
 
     let resUser = await db.collection("products2").find().toArray();
 
-    // await connection.close();
+    await connection.close();
 
     res.json(resUser);
   } catch (error) {
@@ -217,7 +217,7 @@ app.get("/product2/:id", authenticate, async function (req, res) {
       .collection("products2")
       .findOne({ _id: mongodb.ObjectId(req.params.id) });
 
-    // await connection.close();
+    await connection.close();
 
     res.json(resUser);
   } catch (error) {
@@ -239,7 +239,7 @@ app.post("/register", async function (req, res) {
     req.body.password = hash;
 
     await db.collection("users").insertOne(req.body)
-    // await connection.close();
+    await connection.close();
     res.json("User registered successfully");
   } catch (error) {
     console.log(error);
@@ -268,6 +268,7 @@ app.post("/login", async function (req, res) {
     } else {
       res.status(401).json({ message: "Username or Password is incorrect" });
     }
+    await connection.close();
   } catch (error) {
     console.log(error);
     res.status(500).json("Something went wrong");
