@@ -281,7 +281,7 @@ app.post("/resetpassword", async function (req, res) {
     let connection = await mongoClient.connect(URL);
     let db = connection.db(DB);
 
-    let id = await db.collection("register").findOne({ email: req.body.email });
+    let id = await db.collection("users").findOne({ email: req.body.email });
 
     if (id) {
       let mailid = req.body.email;
@@ -354,11 +354,11 @@ app.post("/reset-password-page/:id/:token", async function (req, res) {
     let compare = jwt.verify(token, process.env.SECRET);
     console.log(compare);
     if (compare) {
-      let Person = await db.collection("register").findOne({ _id: mongodb.ObjectId(`${id}`) })
+      let Person = await db.collection("users").findOne({ _id: mongodb.ObjectId(`${id}`) })
       if (!Person) {
         return res.json({ Message: "User Exists!!" });
       }
-      await db.collection("register").updateOne({ _id: mongodb.ObjectId(`${id}`) }, { $set: { password: hash } });
+      await db.collection("users").updateOne({ _id: mongodb.ObjectId(`${id}`) }, { $set: { password: hash } });
       res.json({ message: "Password Updated" });
     } else {
       res.json({ message: "URL TimeOut" })
