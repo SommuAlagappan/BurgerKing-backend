@@ -8,7 +8,7 @@ const dotenv = require('dotenv').config()
 const URL = process.env.DB
 const DB = 'burgerking'
 const PORT = process.env.PORT
-var nodemailer = require("nodemailer");
+const nodemailer = require('nodemailer');
 
 
 const app = express()
@@ -281,10 +281,10 @@ app.post("/resetpassword", async function (req, res) {
     let connection = await mongoClient.connect(URL);
     let db = connection.db(DB);
 
-    let id = await db.collection("users").findOne({ email: req.body.email });
+    let id = await db.collection("users").findOne({ emailAddress: req.body.emailAddress });
 
     if (id) {
-      let mailid = req.body.email;
+      let mailid = req.body.emailAddress;
       let token = jwt.sign({ _id: id._id }, process.env.SECRET, { expiresIn: '5m' });
 
       let link = `https://burgerkingapp.netlify.app/reset-password-page/${id._id}/${token}`;
