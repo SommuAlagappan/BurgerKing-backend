@@ -8,14 +8,14 @@ const dotenv = require('dotenv').config()
 const URL = process.env.DB
 const DB = 'burgerking'
 const PORT = process.env.PORT
-const nodemailer = require('nodemailer');
+
 
 
 const app = express()
 app.use(express.json())
 app.use(
   cors({
-    origin: '*'
+    origin: 'https://burgerkingapp.netlify.app'
   })
 )
 
@@ -274,101 +274,6 @@ app.post("/login", async function (req, res) {
   }
 });
 
-// Password reset
-app.post("/resetpassword", async function (req, res) {
 
-  try {
-    let connection = await mongoClient.connect(URL);
-    let db = connection.db(DB);
-
-    let id = await db.collection("users").findOne({ emailAddress: req.body.emailAddress });
-
-    if (id) {
-      let mailid = req.body.emailAddress;
-      let token = jwt.sign({ _id: id._id }, process.env.SECRET, { expiresIn: '5m' });
-
-      let link = `https://burgerkingapp.netlify.app/reset-password-page/${id._id}/${token}`;
-      console.log(link);
-      // res.send(link)
-
-
-
-      var transporter = nodemailer.createTransport({
-        service: "gmail",
-
-        auth: {
-          user: "sommutest05@gmail.com",
-          pass: process.env.pass,
-        },
-      });
-
-      var mailOptions = {
-        from: "sommutest05@gmail.com",
-        to: mailid,
-        subject: "Password Reset",
-        text: ` Click the link to reset password ${link}`,
-        html: `<h2>  Click the link to reset password ${link}</h2>`,
-      };
-
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-          res.json({
-            message: "Email not sent",
-          });
-          return;
-        } else {
-          console.log("Email sent: " + info.response);
-          res.json({
-            message: "Email sent successfully",
-          });
-        }
-      });
-      res.json({
-        message: "Email sent successfully",
-      });
-    }
-
-
-
-    else {
-      res.json({
-        message: "User not found",
-      });
-    }
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-
-app.post("/reset-password-page/:id/:token", async function (req, res) {
-  const id = req.params.id
-  const token = req.params.token
-  try {
-
-    let salt = await bcrypt.genSalt(10);
-    let hash = await bcrypt.hash(req.body.password, salt);
-    let connection = await mongoClient.connect(URL);
-    let db = connection.db(DB);
-
-    let compare = jwt.verify(token, process.env.SECRET);
-    console.log(compare);
-    if (compare) {
-      let Person = await db.collection("users").findOne({ _id: mongodb.ObjectId(`${id}`) })
-      if (!Person) {
-        return res.json({ Message: "User Exists!!" });
-      }
-      await db.collection("users").updateOne({ _id: mongodb.ObjectId(`${id}`) }, { $set: { password: hash } });
-      res.json({ message: "Password Updated" });
-      return;
-    } else {
-      res.json({ message: "URL TimeOut" })
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'URL TimeOut' });
-    console.log(error);
-  }
-})
 
 app.listen(process.env.PORT || 4001, console.log(`Server is connected in ${PORT}`));
