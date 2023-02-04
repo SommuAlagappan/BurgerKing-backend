@@ -20,7 +20,7 @@ app.use(
 )
 
 app.get('/', function (req, res) {
-  res.send("API is running")
+  return res.send("API is running")
 })
 
 
@@ -35,10 +35,10 @@ let authenticate = (req, res, next) => {
       }
     } catch (error) {
       console.log(error);
-      res.status(401).json("Unauthorised");
+      return res.status(401).json("Unauthorised");
     }
   } else {
-    res.status(401).json("Unauthorised");
+    return res.status(401).json("Unauthorised");
   }
 };
 
@@ -58,11 +58,11 @@ app.post("/product", authenticate, async function (req, res) {
 
     // Step5: Close the connection
     await connection.close();
-    res.status(200).json({ message: "Data inserted successfully" });
+    return res.status(200).json({ message: "Data inserted successfully" });
   } catch (error) {
     console.log(error);
     //If any error throw error
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
@@ -76,10 +76,10 @@ app.get("/products", authenticate, async function (req, res) {
 
     await connection.close();
 
-    res.json(resUser);
+    return res.json(resUser);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
@@ -95,10 +95,10 @@ app.get("/product/:id", authenticate, async function (req, res) {
 
     await connection.close();
 
-    res.json(resUser);
+    return res.json(resUser);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
@@ -120,11 +120,11 @@ app.post("/product1", authenticate, async function (req, res) {
 
     // Step5: Close the connection
     await connection.close();
-    res.status(200).json({ message: "Data inserted successfully" });
+    return res.status(200).json({ message: "Data inserted successfully" });
   } catch (error) {
     console.log(error);
     //If any error throw error
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
@@ -138,10 +138,10 @@ app.get("/products1", authenticate, async function (req, res) {
 
     await connection.close();
 
-    res.json(resUser);
+    return res.json(resUser);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
@@ -157,10 +157,10 @@ app.get("/product1/:id", authenticate, async function (req, res) {
 
     await connection.close();
 
-    res.json(resUser);
+    return res.json(resUser);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
@@ -182,11 +182,11 @@ app.post("/product2", authenticate, async function (req, res) {
 
     // Step5: Close the connection
     await connection.close();
-    res.status(200).json({ message: "Data inserted successfully" });
+    return res.status(200).json({ message: "Data inserted successfully" });
   } catch (error) {
     console.log(error);
     //If any error throw error
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
@@ -200,10 +200,10 @@ app.get("/products2", authenticate, async function (req, res) {
 
     await connection.close();
 
-    res.json(resUser);
+    return res.json(resUser);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
@@ -219,10 +219,10 @@ app.get("/product2/:id", authenticate, async function (req, res) {
 
     await connection.close();
 
-    res.json(resUser);
+    return res.json(resUser);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
@@ -240,10 +240,10 @@ app.post("/register", async function (req, res) {
 
     await db.collection("users").insertOne(req.body)
     await connection.close();
-    res.json("User registered successfully");
+    return res.json("User registered successfully");
   } catch (error) {
     console.log(error);
-    res.json(error);
+    return res.json(error);
   }
 });
 
@@ -261,16 +261,16 @@ app.post("/login", async function (req, res) {
         let token = jwt.sign({ _id: user._id }, process.env.SECRET, {
           expiresIn: "1h"
         })
-        res.json({ token })
+        return res.json({ token })
       } else {
-        res.status(401).json({ message: "Username or Password is incorrect" });
+        return res.status(401).json({ message: "Username or Password is incorrect" });
       }
     } else {
-      res.status(401).json({ message: "Username or Password is incorrect" });
+      return res.status(401).json({ message: "Username or Password is incorrect" });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json("Something went wrong");
+    return res.status(500).json("Something went wrong");
   }
 });
 
@@ -289,7 +289,7 @@ app.post("/resetpassword", async function (req, res) {
 
       let link = `https://burgerkingapp.netlify.app/reset-password-page/${id._id}/${token}`;
       console.log(link);
-      // res.send(link)
+      // return res.send(link)
 
 
 
@@ -313,17 +313,17 @@ app.post("/resetpassword", async function (req, res) {
       transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
           console.log(error);
-          res.json({
+          return res.json({
             message: "Email not sent",
           });
         } else {
           console.log("Email sent: " + info.response);
-          res.json({
+          return res.json({
             message: "Email sent successfully",
           });
         }
       });
-      res.json({
+      return res.json({
         message: "Email sent successfully",
       });
     }
@@ -331,7 +331,7 @@ app.post("/resetpassword", async function (req, res) {
 
 
     else {
-      res.json({
+      return res.json({
         message: "User not found",
       });
     }
@@ -359,12 +359,12 @@ app.post("/reset-password-page/:id/:token", async function (req, res) {
         return res.json({ Message: "User Exists!!" });
       }
       await db.collection("users").updateOne({ _id: mongodb.ObjectId(`${id}`) }, { $set: { password: hash } });
-      res.json({ message: "Password Updated" });
+      return res.json({ message: "Password Updated" });
     } else {
-      res.json({ message: "URL TimeOut" })
+      return res.json({ message: "URL TimeOut" })
     }
   } catch (error) {
-    res.status(500).json({ message: 'URL TimeOut' });
+    return res.status(500).json({ message: 'URL TimeOut' });
     console.log(error);
   }
 })
